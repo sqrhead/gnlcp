@@ -16,8 +16,8 @@ int main()
 	printf("open return : %i\n",fd);
 	printf("buffer	    : %s\n",buffer);
 	write(fd,buffer,strlen(buffer));
-	size_t nb = read(fd,buffer_read,strlen(buffer_read)); 
-	printf("nbytes      : %li\n",nb);
-	printf("buffer_read : %s\n",buffer_read);
 	close(fd); 
+	fd = open("gnlrd.txt",O_RDONLY); 
+	if (fd == -1)
+		return 1; 
 }

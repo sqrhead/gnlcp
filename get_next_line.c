@@ -1,5 +1,7 @@
 #include "get_next_line.h"
 
+#define BUFFSIZE 2048
+
 // free, malloc, read
 char	*get_next_line(int fd)
 {
@@ -50,7 +52,7 @@ int main()
 	// Buffer for write mode
 	char	buffer[100];
 	// Buffer for read mode
-	char	buffr[1024];
+	char	buffr[BUFFSIZE];
 	char	**strs;
 	size_t	nlines;
 	size_t	nbytes;
@@ -68,7 +70,8 @@ int main()
 	nlines = 0;
 	fd = open("gnlrd.txt",O_RDONLY); 
 	if (fd == -1)
-		return 1; 
+		return 1;
+       /*	
 	while (nbytes != 0)
 	{
 		nbytes = read(fd,buffr,1024);
@@ -90,8 +93,19 @@ int main()
 			idx ++;
 		}	
 	}
+	*/
+	nbytes = read(fd,buffr,1024); 
+	size_t index = 0;
+	while (buffr[index])
+	{	
+		printf("%c",buffr[index]);
+		if (buffr[index] == '\n')
+		{
+			printf("-------------------\n");
+		}
+		index ++;
+	}
+	//printf("buff [ %s ]\n",buffr);
 	close(fd);
-	size_t	index = 0;
-	printf("buffr : [ %s ]\n",buffr);
-	printf("nlines %li\n",nlines);
+	//printf("nlines %li\n",nlines);
 }

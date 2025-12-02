@@ -1,14 +1,23 @@
 #include "get_next_line.h"
 
+// free, malloc, read
 char	*get_next_line(int fd)
 {
 }
 
 int main()
-{
-	printf("GNL\n");
-	char buffer[100] = "ornitorinco"; 
-	printf("buffer : %s\n",buffer);
-	size_t nbytes = read(1,buffer,12);
-	printf("bytes : %lu\n",nbytes);
+{	
+	int 	fd;
+	char	buffer[100];
+	char	buffer_read[100];
+	
+	strcpy(buffer,"ornitorinco");
+	fd = open("gnldata.txt",O_WRONLY | O_TRUNC | O_CREAT, 0640);
+	printf("open return : %i\n",fd);
+	printf("buffer	    : %s\n",buffer);
+	write(fd,buffer,strlen(buffer));
+	size_t nb = read(fd,buffer_read,strlen(buffer_read)); 
+	printf("nbytes      : %li\n",nb);
+	printf("buffer_read : %s\n",buffer_read);
+	close(fd); 
 }

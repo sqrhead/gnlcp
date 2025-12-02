@@ -1,10 +1,46 @@
 #include "get_next_line.h"
 
 #define BUFFSIZE 2048
+size_t	strlen_nl(const char *str)
+{
+	size_t	len;
+	size_t	index;
 
+	index = 0;
+	len = 0;
+	while (str[len])
+	{	
+		if (str[len] == '\n')
+		{
+			return (len);
+		}
+		len ++;
+	}
+	return (len);
+}
 // free, malloc, read
 char	*get_next_line(int fd)
 {
+	size_t	nbytes;
+	size_t	index;
+	size_t	mark;
+	size_t	len;
+	char	str[BUFFSIZE];
+	char	*line;
+
+	nbytes = 0;
+	index = 0;
+	mark = 0;
+	nbytes = read(fd,str,BUFFSIZE);
+	if (nbytes < 0)
+		return (NULL);
+	if (index < BUFFSIZE && str[index])
+	{	
+		len = strlen_ln(str);
+		line = (char *)malloc(sizeof(char) * (len + 1));
+		strcpy(line,str,len);
+		return (line);
+	}
 }
 typedef struct s_file 
 {

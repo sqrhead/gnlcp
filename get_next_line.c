@@ -24,7 +24,7 @@ size_t	strlen_nl(char *str)
 }
 char *str_inl(const char *buff, const size_t index)
 {
-	size_t 	len;
+	size_t	len;
 	size_t	i;
 	size_t	counter;
 	char	*str;
@@ -58,102 +58,68 @@ char *str_inl(const char *buff, const size_t index)
 // static size_t as index for the next string to get
 char	*get_next_line(int fd)
 {
-	size_t		nbytes;
-	static size_t	index;
-	static char	*str;
-	char		*line;
+		static size_t	internal_index = 0;
+		static char		*buffer; 
+		size_t			bytes;
+		char			*str;
+		size_t			len;
+		size_t			i; 
 
-	nbytes = 0;
-	index = 0;
-	if (str == NULL )
-		str = (char *)calloc(BUFFER_SIZE,sizeof(char));
-	if (str[0] == '\0')
-	{	
-		printf("str empty \n");
-		nbytes = read(fd,str,BUFFER_SIZE);
-	}
-	if (nbytes < 0)
-		return (NULL);
-	if (index < BUFFER_SIZE)
-	{	
-		line = str_inl(str,index);
-		index ++;
-		//free(str);
-		return (line);
-	}
-	printf("FAIL_GET_NEXT_LINE\n");
-	return (NULL);
-}
-
-int main()
-{		
-	// File Descript 	
-	int 	fd;
-	// Buffer for write mode
-	/*
-	char	*buffr;
-	char	*buffx;
-	char	*buffy;
-
-	fd = open("gnlrd.txt",O_RDONLY);
-	buffr = get_next_line(fd);
-	printf("output  [ %s ]\n",buffr);
-	buffx = get_next_line(fd);
-	printf("outputx [ %s ]\n",buffx);
-	buffy = get_next_line(fd);
-	printf("outputy [ %s ]\n",buffy);
-
-	free(buffr);	
-	free(buffx);
-	free(buffy);
-	close(fd);
-	*/
-
-	if (DEBUG == 1)
-	{
-		printf("*********************************************\n");
-		printf("- DEBUG_MODE\n");
-		printf("*********************************************\n");
-		static size_t	_internal_index = 0;
-		static char	*_ibuffer; 
-		size_t		_ibytes;
-		size_t		_ifd;
-		char		*str;
-
-		_ibuffer = (char *)malloc(sizeof(char) * 1024); 
+		len = 0;
+		i = 0;
 		str = NULL;
-		if (!_ibuffer)
+		if (!buffer)
 		{
-			printf("FAILED_MALLOC\n");
-			return (1);
+			printf("calloc . . . \n");
+			buffer = (char *)calloc(BUFFER_SIZE,sizeof(char));
+			if (!buffer)
+				return (NULL);
+			printf("read . . .\n");
+			bytes = read(fd,buffer,BUFFER_SIZE);
 		}
-		_ifd = open("gnlrd.txt",O_RDONLY);
-		_ibytes = read(_ifd,_ibuffer,40);
-		printf("%s\n",_ibuffer);
-		// count until new line
-		size_t	len = 0;
-		size_t	i = 0;
-		while (_ibuffer[i])
+		if (DEBUG == 1 && internal_index < 1)
+		{
+			printf("buffer : \n%s\n",buffer);
+		}
+		while (buffer[i + internal_index])
 		{	
-			if (_ibuffer[i] == EOF)
+			if (buffer[i + internal_index] == EOF)
 			{
 				printf("EOF REACHED\n");
-				return (1);
+				return (NULL);
 			}
-			if (_ibuffer[i] == '\n')
+			if (buffer[i + internal_index] == '\n' || !buffer[i + internal_index])
 				break;
 			len ++;
 			i ++;	
 		}
 		// malloc and cpy
 		str = (char *)malloc(sizeof(char) * (len + 1));
-		memcpy(str,_ibuffer,len);
-		printf("str : %s\n",str);
-		_internal_index += len;
+		memcpy(str,buffer+internal_index,len);
+		str[len] = '\0';
+		internal_index += len + 1;
+		printf("INFO : inter index %li\n",internal_index);
+		return (str);
 		
-		
-		free(_ibuffer);
-		close(_ifd);
+}
+
+int main()
+{	
+
+	size_t	fd;
+	char	*ln;
+	char	*ln2;
+	size_t	i;
+
+	i = 0;
+	fd = open("gnlrd.txt",O_RDONLY);
+	while (i < 4)
+	{
+		ln = get_next_line(fd);
+		printf("ln %s\n",ln);
+		i ++;
 	}
-	
+
+	free(ln);
+	close(fd);
 }

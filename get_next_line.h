@@ -8,5 +8,5 @@
 #include <string.h> 
 
 char	*get_next_line(int fd);
-
+size_t	strlen_nl(char *str);
 #endif 

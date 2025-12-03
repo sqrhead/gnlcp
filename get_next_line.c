@@ -1,7 +1,7 @@
 #include "get_next_line.h"
 
-#define BUFFSIZE 2048
-size_t	strlen_nl(const char *str)
+#define BUFFSIZE 20
+size_t	strlen_nl(char *str)
 {
 	size_t	len;
 	size_t	index;
@@ -21,64 +21,30 @@ size_t	strlen_nl(const char *str)
 // free, malloc, read
 char	*get_next_line(int fd)
 {
-	size_t	nbytes;
-	size_t	index;
-	size_t	mark;
-	size_t	len;
-	char	str[BUFFSIZE];
-	char	*line;
+	size_t		nbytes;
+	static size_t	index;
+	size_t		mark;
+	size_t		len;
+	static char	*str;
+	char		*line;
 
 	nbytes = 0;
 	index = 0;
 	mark = 0;
+	str = (char *)calloc(BUFFSIZE,sizeof(char));
 	nbytes = read(fd,str,BUFFSIZE);
 	if (nbytes < 0)
 		return (NULL);
-	if (index < BUFFSIZE && str[index])
+	if (index < BUFFSIZE)
 	{	
-		len = strlen_ln(str);
+		len = strlen_nl(str);
 		line = (char *)malloc(sizeof(char) * (len + 1));
-		strcpy(line,str,len);
+		memcpy(line,str,len);
+		//free(str);
 		return (line);
 	}
-}
-typedef struct s_file 
-{
-	char		*str;
-	size_t		len;
-	struct s_file	*next;
-
-}	t_file;
-
-t_file	*fl_new(char *str,size_t len)
-{
-	t_file *fl = (t_file *)malloc(sizeof(t_file));
-	fl->str = str;
-	fl->len = len;
-	fl->next = NULL;
-}
-t_file	*fl_lst(t_file *head)
-{	
-	t_file	*tmp;
-
-	tmp = head;
-	while (tmp->next != NULL)
-	{
-		tmp = tmp->next;
-	}
-	return (tmp);
-}
-
-void	fl_add_back(t_file *head,t_file *new)
-{
-	t_file	*tmp;
-	if (!head)
-	{
-		head = new;
-		return ;
-	}
-	tmp = fl_lst(head);
-	tmp->next = new;
+	printf("FAIL_GET_NEXT_LINE\n");
+	return (NULL);
 }
 
 int main()
@@ -86,62 +52,22 @@ int main()
 	// File Descript 	
 	int 	fd;
 	// Buffer for write mode
-	char	buffer[100];
-	// Buffer for read mode
-	char	buffr[BUFFSIZE];
-	char	**strs;
-	size_t	nlines;
-	size_t	nbytes;
-	
-	// WRITE OPERATIONS 
-	strcpy(buffer,"ornitorinco");
-	fd = open("gnldata.txt",O_WRONLY | O_TRUNC | O_CREAT, 0640);
-	//printf("open return : %i\n",fd);
-	//printf("buffer	    : %s\n",buffer);
-	write(fd,buffer,strlen(buffer));
-	close(fd); 
-	
-	// READ OPERATIONS 
-	nbytes = -1;	
-	nlines = 0;
-	fd = open("gnlrd.txt",O_RDONLY); 
-	if (fd == -1)
-		return 1;
-       /*	
-	while (nbytes != 0)
-	{
-		nbytes = read(fd,buffr,1024);
-		if (nbytes == -1)
-		{
-			printf(">> Fail !!\n");
-			return (1);
-		}
-		buffr[nbytes] = '\0';
-		printf("buffr \n%s\n",buffr);
-		//printf("x\n");
-		size_t idx = 0;
-		while (buffr[idx])
-		{	
-			if (buffr[idx] == '\n')
-			{
-				nlines ++;
-			}
-			idx ++;
-		}	
-	}
-	*/
-	nbytes = read(fd,buffr,1024); 
-	size_t index = 0;
-	while (buffr[index])
-	{	
-		printf("%c",buffr[index]);
-		if (buffr[index] == '\n')
-		{
-			printf("-------------------\n");
-		}
-		index ++;
-	}
-	//printf("buff [ %s ]\n",buffr);
+	char	*buffr;
+	char	*buffx;
+	char	*buffy;
+
+	fd = open("gnlrd.txt",O_RDONLY);
+	buffr = get_next_line(fd);
+	printf("output  [ %s ]\n",buffr);
+	buffx = get_next_line(fd);
+	printf("outputx [ %s ]\n",buffx);
+	buffy = get_next_line(fd);
+	printf("outputy [ %s ]\n",buffy);
+
+	free(buffr);	
+	free(buffx);
+	free(buffy);
 	close(fd);
-	//printf("nlines %li\n",nlines);
+	
+	
 }

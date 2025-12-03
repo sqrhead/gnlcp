@@ -2,6 +2,9 @@
 #ifndef BUFFER_SIZE
 # define BUFFER_SIZE 1024
 #endif
+#ifndef DEBUG 
+# define DEBUG 0
+#endif
 size_t	strlen_nl(char *str)
 {
 	size_t	len;
@@ -87,6 +90,7 @@ int main()
 	// File Descript 	
 	int 	fd;
 	// Buffer for write mode
+	/*
 	char	*buffr;
 	char	*buffx;
 	char	*buffy;
@@ -103,6 +107,53 @@ int main()
 	free(buffx);
 	free(buffy);
 	close(fd);
-	
+	*/
+
+	if (DEBUG == 1)
+	{
+		printf("*********************************************\n");
+		printf("- DEBUG_MODE\n");
+		printf("*********************************************\n");
+		static size_t	_internal_index = 0;
+		static char	*_ibuffer; 
+		size_t		_ibytes;
+		size_t		_ifd;
+		char		*str;
+
+		_ibuffer = (char *)malloc(sizeof(char) * 1024); 
+		str = NULL;
+		if (!_ibuffer)
+		{
+			printf("FAILED_MALLOC\n");
+			return (1);
+		}
+		_ifd = open("gnlrd.txt",O_RDONLY);
+		_ibytes = read(_ifd,_ibuffer,40);
+		printf("%s\n",_ibuffer);
+		// count until new line
+		size_t	len = 0;
+		size_t	i = 0;
+		while (_ibuffer[i])
+		{	
+			if (_ibuffer[i] == EOF)
+			{
+				printf("EOF REACHED\n");
+				return (1);
+			}
+			if (_ibuffer[i] == '\n')
+				break;
+			len ++;
+			i ++;	
+		}
+		// malloc and cpy
+		str = (char *)malloc(sizeof(char) * (len + 1));
+		memcpy(str,_ibuffer,len);
+		printf("str : %s\n",str);
+		_internal_index += len;
+		
+		
+		free(_ibuffer);
+		close(_ifd);
+	}
 	
 }

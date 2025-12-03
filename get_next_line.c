@@ -1,6 +1,6 @@
 #include "get_next_line.h"
 
-#define BUFFSIZE 20
+#define BUFFSIZE 1024
 size_t	strlen_nl(char *str)
 {
 	size_t	len;
@@ -31,8 +31,13 @@ char	*get_next_line(int fd)
 	nbytes = 0;
 	index = 0;
 	mark = 0;
-	str = (char *)calloc(BUFFSIZE,sizeof(char));
-	nbytes = read(fd,str,BUFFSIZE);
+	if (str == NULL )
+		str = (char *)calloc(BUFFSIZE,sizeof(char));
+	if (str[0] == '\0')
+	{	
+		printf("str empty \n");
+		nbytes = read(fd,str,BUFFSIZE);
+	}
 	if (nbytes < 0)
 		return (NULL);
 	if (index < BUFFSIZE)

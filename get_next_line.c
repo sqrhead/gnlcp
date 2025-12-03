@@ -81,7 +81,7 @@ char	*get_next_line(int fd)
 		{
 			printf("buffer : \n%s\n",buffer);
 		}
-		while (buffer[i + internal_index])
+		while (buffer[i + internal_index] && i + internal_index < BUFFER_SIZE)
 		{	
 			if (buffer[i + internal_index] == EOF)
 			{
@@ -110,10 +110,12 @@ int main()
 	char	*ln;
 	char	*ln2;
 	size_t	i;
+	size_t	iter;
 
 	i = 0;
+	iter = 10;
 	fd = open("gnlrd.txt",O_RDONLY);
-	while (i < 4)
+	while (i < iter)
 	{
 		ln = get_next_line(fd);
 		printf("ln %s\n",ln);

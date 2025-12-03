@@ -58,7 +58,7 @@ char	*get_next_line(int fd)
 		return (str);
 		
 }
-/*
+
 int main()
 {	
 
@@ -90,4 +90,3 @@ int main()
 	free(ln);
 	close(fd);
 }
-*/

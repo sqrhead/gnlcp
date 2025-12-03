@@ -9,4 +9,5 @@
 
 char	*get_next_line(int fd);
 size_t	strlen_nl(char *str);
+char	*str_inl(const char *buff, const size_t index);
 #endif 

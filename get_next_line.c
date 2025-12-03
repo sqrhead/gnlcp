@@ -1,6 +1,7 @@
 #include "get_next_line.h"
-
-#define BUFFSIZE 1024
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 1024
+#endif
 size_t	strlen_nl(char *str)
 {
 	size_t	len;
@@ -18,33 +19,62 @@ size_t	strlen_nl(char *str)
 	}
 	return (len);
 }
+char *str_inl(const char *buff, const size_t index)
+{
+	size_t 	len;
+	size_t	i;
+	size_t	counter;
+	char	*str;
+
+	if (!buff || index < 0)
+		return (NULL);
+	i = 0;
+	counter = 0;
+	while (buff[i] && counter < index)
+	{
+		i ++; 
+		if (buff[i] == '\n')
+			counter ++;
+	}
+	while (buff[i] && buff[i] != '\n')
+	{
+		len ++;
+		i ++;
+	}
+	
+	printf("_len %li\n",len);
+	printf("_internal_index %li\n",i);
+	str = (char *)malloc(sizeof(char) * len);
+	memcpy(str,&buff[i-len],len);
+	printf("_str %s\n",str);
+	return (str);
+		
+}
 // free, malloc, read
+// static char* to keep the state 
+// static size_t as index for the next string to get
 char	*get_next_line(int fd)
 {
 	size_t		nbytes;
 	static size_t	index;
-	size_t		mark;
-	size_t		len;
 	static char	*str;
 	char		*line;
 
 	nbytes = 0;
 	index = 0;
-	mark = 0;
 	if (str == NULL )
-		str = (char *)calloc(BUFFSIZE,sizeof(char));
+		str = (char *)calloc(BUFFER_SIZE,sizeof(char));
 	if (str[0] == '\0')
 	{	
 		printf("str empty \n");
-		nbytes = read(fd,str,BUFFSIZE);
+		nbytes = read(fd,str,BUFFER_SIZE);
 	}
 	if (nbytes < 0)
 		return (NULL);
-	if (index < BUFFSIZE)
+	if (index < BUFFER_SIZE)
 	{	
-		len = strlen_nl(str);
-		line = (char *)malloc(sizeof(char) * (len + 1));
-		memcpy(line,str,len);
+		line = str_inl(str,index);
+		index ++;
 		//free(str);
 		return (line);
 	}
@@ -53,7 +83,7 @@ char	*get_next_line(int fd)
 }
 
 int main()
-{	
+{		
 	// File Descript 	
 	int 	fd;
 	// Buffer for write mode

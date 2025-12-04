@@ -119,6 +119,8 @@ char	*get_next_line(int fd)
 	while (!stop(buffer))
 	{
 		nb = read(fd,tmpbuff,BUFFER_SIZE);
+		if (nb == 0)
+			return (NULL);
 		tmpbuff[nb] = '\0';
 		buffer = buffer_join(buffer,tmpbuff);
 	}

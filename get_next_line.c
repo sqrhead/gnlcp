@@ -24,6 +24,16 @@ size_t	updt_index(char *buffer)
 	while(buffer[index] && index < 1024)
 	{
 		index ++;
+		if (index >= 1024)
+		{
+			index = 0;
+			while (buffer[index])
+			{
+				buffer[index] = '\0';
+				index ++;
+			}
+			return (0);
+		}
 	}
 	return (index);
 }
@@ -31,6 +41,7 @@ size_t	updt_index(char *buffer)
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
+	char		*tmpbuff[BUFFER_SIZE];
 	size_t		nb;
 	size_t		index;
 	char		*str;
@@ -49,7 +60,7 @@ char	*get_next_line(int fd)
 	len = 0;
 	index = updt_index(buffer);
 
-	while (!stop(buffer))
+	while (!stop(buffer) && index + BUFFER_SIZE < 1024)
 	{
 		nb = read(fd,&buffer[index],BUFFER_SIZE);
 		if (nb == 0)
@@ -67,20 +78,20 @@ char	*get_next_line(int fd)
 	dup = strdup(buffer + len + 1);
 	free(buffer);
 	buffer = dup;
-	//buffer = buffer + len; 
 	return (str);
 		
 }
+
 int main()
 {	
 	size_t	fd;
-	char	*str;
 
 	fd = open("gnlrd.txt",O_RDONLY);
 	for (size_t i = 0; i < 10; i ++)
 	{
-	
+		printf("ln %s\n",get_next_line(fd));	
 	}
-	free(str);
 	close(fd);
 }
+
+

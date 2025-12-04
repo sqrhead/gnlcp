@@ -5,58 +5,75 @@
 #ifndef DEBUG 
 # define DEBUG 0
 #endif
+
+typedef struct s_dynbuffer
+{
+	char 			*buffer;
+	size_t			len;
+	size_t			is_nl;
+	struct s_dynbuffer	*next;
+
+} t_dynbuffer;
+
+t_dynbuffer	*dynbuff_getlst(const t_dynbuffer *head)
+{
+	t_dynbuffer	*tmp;
+
+	if (!head)
+		return (NULL);
+	tmp = (t_dynbuffer *)head;
+	while (tmp->next != NULL)
+	{
+		tmp = tmp->next;
+	}
+	return (tmp);
+}
+
+void	dynbuff_addback(t_dynbuffer *head,t_dynbuffer *new)
+{
+	t_dynbuffer	*lst;
+	if (!new)
+		return ;
+	if (!head)
+		head = new;
+	lst = dynbuff_getlst(head);
+	lst->next = new;
+}
+
+
+/*
+ *	-- GET LINE UNTIL \n
+ *	-- UP INDEX 
+ *	-- CHECK EOF 
+ *	-- FREE EVERYTHING USED
+ *	-- 
+ *
+ * */
 // free, malloc, read
 // static char* to keep the state 
 // static size_t as index for the next string to get
 char	*get_next_line(int fd)
 {
-		static size_t		internal_index = 0; // check static initialization
-		static char		*buffer = NULL; 
-		size_t			bytes;
-		char			*str;
-		size_t			len;
-		size_t			i; 
+	static t_dynbuffer	*dynbuff;
+	char			*tmpbuffer;
+	char			*cpybuffer;
+	size_t			rbytes;
+
+
+	dynbuffer = (t_dynbuffer *)malloc(sizeof(t_dynbuffer *));
+	if (!dynbuffer)
+	{
+		printf("BUFFER FAIL!\n");
+		return (NULL);
+	}
+	tmpbuffer = (char *)malloc(sizeof(char) * BUFFER_SIZE);
+	// todo check
+	rbytes = read(fd,tmpbuffer,BUFFER_SIZE);
+	cpybuffer = strdup(tmpbuffer);
+	dyn->buffer = cpybuffer;
+			
 	
-		len = 0;
-		i = 0;
-		str = NULL;
-		if (!buffer)
-		{
-			printf("calloc . . . \n");
-			buffer = (char *)calloc(BUFFER_SIZE,sizeof(char));
-			if (!buffer)
-				return (NULL);
-			printf("read . . .\n");
-			bytes = read(fd,buffer,BUFFER_SIZE);
-			if (bytes == 0)
-				return (NULL);
-		}
-		printf("INFO : pre_internal index %li\n",internal_index);
-		if (DEBUG == 1 && internal_index < 1)
-		{
-			printf("buffer : \n%s\n",buffer);
-		}
-		while (buffer[i + internal_index])
-		{	
-			if (!buffer[i + internal_index + 1])
-			{
-				printf("INFO : EOF REACHED\n");
-				return (NULL);
-			}
-			if (buffer[i + internal_index] == '\n' || !buffer[i + internal_index])
-				break;
-			len ++;
-			i ++;	
-		}
-		// malloc and cpy
-		str = (char *)malloc(sizeof(char) * (len + 1));
-		if (!str)
-			return (NULL);
-		memcpy(str,buffer + internal_index,len);
-		str[len] = '\0';
-		internal_index = internal_index + len + 1;
-		return (str);
-		
+	free(tmpbuffer);
 }
 
 int main()

@@ -1,10 +1,7 @@
-"Hello, World!"
-"C0d3_L0v3r#2025"
-"ASCII_Printable_~!"
-"Fun_with_12345"
-"Symbols: @#$%^&*()"
-"The_quick_brown_fox"
-"Jumped_over_12_lazy_dogs"
-"Python>C_is_fun!"
-"Escape\\Sequences\\Test"
-"End_of_Line;-)"
+***************
+---------------
+ooooooooooooooo
+888888888888888
+ooooooooooooooo
+---------------
+***************

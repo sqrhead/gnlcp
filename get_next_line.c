@@ -129,7 +129,7 @@ char	*get_next_line(int fd)
 	buffer = fix_buffer(buffer);
 	return (str);
 }
-/*
+
 int main()
 {	
 	size_t	fd;
@@ -141,5 +141,3 @@ int main()
 	}
 	close(fd);
 }
-*/
-

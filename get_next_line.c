@@ -1,143 +1,151 @@
 #include "get_next_line.h"
 
-int     stop(char *buffer)
+int	has_newline(char *buffer)
 {
-        size_t  i;
+	size_t	i;
+
+	i = 0;
 	if (!buffer)
 		return (0);
-        i = 0;
-        while(buffer[i])
-        {
-                if (buffer[i] == '\n')
-                {
-                        return (1);
-                }
-                i ++;
-        }
-        return (0);
-}
-
-size_t	ft_strlen(const char *str)
-{
-	size_t len;
-
-	len = 0;
-	while (str[len])
-		len ++;
-	return (len);
-}
-char	*buffer_join(char *buff, char *tmp)
-{	
-	char 	*joined;
-	size_t	i;
-	size_t	j;
-
-	joined = NULL;
-	i = 0;
-	j = 0;
-
-	if (!buff)
+	while(buffer[i])
 	{
-		buff = (char *)malloc(sizeof(char));
-		buff[0] = '\0';	
-	}
-	joined = (char *)malloc(ft_strlen(buff) + ft_strlen(tmp) + 1);
-	if (!joined)
-		return (NULL);
-	while (buff[i])
-	{
-		joined[i] = buff[i];
+		if (buffer[i] == '\n')
+			return (1);
 		i ++;
 	}
-	while (tmp[j])
+	return (0);
+}
+
+char	*join_buffers(char *buffer, char *read_buffer)
+{
+	char	*nbuffer;
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (!buffer)
 	{
-		joined[i + j] = tmp[j];
+		buffer = (char *)malloc(1);
+		if (!buffer)
+			return (NULL);
+		buffer[0] = '\0';
+	}
+	if (!read_buffer)
+		return (NULL);
+	nbuffer = (char *)malloc(strlen(buffer) + strlen(read_buffer));
+	if (!nbuffer)
+		return (NULL);
+	while (buffer[i])
+	{
+		nbuffer[i] = buffer[i];
+		i ++;
+	}
+	while(read_buffer[j])
+	{
+		nbuffer[i + j] = read_buffer[j];
 		j ++;
 	}
-	joined[i + j] = '\0';
-	free(buff);
-	return (joined);
+	free(buffer);
+	return (nbuffer);
 }
 
-char	*fix_buffer(char *buffer)
+char 	*buffer_resize(char *buffer, char *str)
 {
-	char	*tmp;
+	char	*nbuffer;
+	size_t	s_len;
 	size_t	i;
 	size_t	j;
 
 	i = 0;
 	j = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i ++;
-	if (!buffer[i])
+	if (!buffer)
+		return (NULL);
+	if (!str)
 	{
 		free(buffer);
 		return (NULL);
 	}
-	tmp = (char *)malloc(ft_strlen(buffer) - i);
-	i ++;
-	while (buffer[i])
+	s_len = strlen(str);
+	nbuffer = (char *)malloc(strlen(buffer) - s_len);
+	if(!nbuffer)
+		return (NULL);
+	while(buffer[i])
 	{
-		tmp[j] = buffer[i];
-		j ++;
+		nbuffer[j] = buffer[s_len + i];
 		i ++;
+		j ++;
 	}
-	tmp[j] = '\0';
-	return (tmp);
+	free(buffer);
+	nbuffer[j] = '\0';
+	//nbuffer = join_buffers(nbuffer,&buffer[i]);
+	return (nbuffer);
 
 }
-
-char 	*get_line(const char *buffer)
+char	*get_line(char *buffer)
 {
-	size_t	len;
+	size_t	i;
 	char	*str;
 
-	len = 0;
-	if (!buffer || buffer[0] == '\0')
-		return (NULL);
-	while(buffer[len] && buffer[len] != '\n')
-		len ++;
-	if (buffer[len] == '\n')
-		len ++;
-	str = (char *)malloc(sizeof(char) * len);
-	if (!str)
-		return (NULL);
-	memcpy(str,buffer,len);
-	return (str);
-
+	i = 0;
+	while(buffer[i] && buffer[i] != '\n')
+	{
+		i ++;
+	}
+	if (buffer[i] == '\n')
+	{
+		str = (char *)malloc(sizeof(char) * (i + 2));
+		if (!str)
+			return (NULL);
+		memcpy(str,buffer,i);
+		str[i] = '\n';
+		str[i + 1] = '\0';
+		return (str);
+	}
+	else
+	{
+		str = (char *)malloc(sizeof(char) * (i + 1));
+		if (!str)
+			return (NULL);
+		memcpy(str,buffer,i);
+		str[i] = '\0';
+		return (str);
+	}
 }
-
 
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
-	char		tmpbuff[BUFFER_SIZE + 1];
+	int			nbytes;
+	char		read_buffer[BUFFER_SIZE + 1];
 	char		*str;
-	size_t		nb;
-	
-	// read 
-	while (!stop(buffer))
+
+	while(!has_newline(buffer))
 	{
-		nb = read(fd,tmpbuff,BUFFER_SIZE);
-		if (nb == 0)
-			return (NULL);
-		tmpbuff[nb] = '\0';
-		buffer = buffer_join(buffer,tmpbuff);
+		nbytes = read(fd,read_buffer,BUFFER_SIZE);
+		if (nbytes <= 0)
+		{
+			if (buffer)
+				free(buffer);
+			return (NULL); // fail reading
+			read_buffer[nbytes] = '\0';
+		}
+		buffer = join_buffers(buffer,read_buffer);
 	}
-	// check
+
 	str = get_line(buffer);
-	buffer = fix_buffer(buffer);
+	buffer = buffer_resize(buffer,str);
 	return (str);
 }
-
+ 
 int main()
-{	
+{
 	size_t	fd;
 
 	fd = open("gnlrd.txt",O_RDONLY);
 	for (size_t i = 0; i < 10; i ++)
 	{
-		printf("ln %s\n",get_next_line(fd));	
+		printf("ln %s\n",get_next_line(fd));
 	}
 	close(fd);
 }

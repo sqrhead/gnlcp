@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/07 13:40:26 by sqrhead           #+#    #+#             */
+/*   Updated: 2025/12/07 13:44:43 by sqrhead          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 void	*ft_memcpy(void *to, const void *from, size_t nbytes)
@@ -25,7 +37,7 @@ char	*get_line(char *buffer)
 	char	*str;
 
 	i = 0;
-	while(buffer[i] && buffer[i] != '\n')
+	while (buffer[i] && buffer[i] != '\n')
 	{
 		i ++;
 	}
@@ -34,20 +46,17 @@ char	*get_line(char *buffer)
 		str = (char *)malloc(sizeof(char) * (i + 2));
 		if (!str)
 			return (NULL);
-		ft_memcpy(str,buffer,i);
+		ft_memcpy(str, buffer, i);
 		str[i] = '\n';
 		str[i + 1] = '\0';
 		return (str);
 	}
-	else
-	{
-		str = (char *)malloc(sizeof(char) * (i + 1));
-		if (!str)
-			return (NULL);
-		ft_memcpy(str,buffer,i);
-		str[i] = '\0';
-		return (str);
-	}
+	str = (char *)malloc(sizeof(char) * (i + 1));
+	if (!str)
+		return (NULL);
+	ft_memcpy(str, buffer, i);
+	str[i] = '\0';
+	return (str);
 }
 
 char	*get_next_line(int fd)
@@ -59,9 +68,9 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while(!has_newline(buffer))
+	while (!has_newline(buffer))
 	{
-		nbytes = read(fd,read_buffer,BUFFER_SIZE);
+		nbytes = read(fd, read_buffer, BUFFER_SIZE);
 		if (nbytes <= 0)
 		{
 			if (buffer && buffer[0] != '\0')
@@ -74,11 +83,10 @@ char	*get_next_line(int fd)
 			return (NULL);
 		}
 		read_buffer[nbytes] = '\0';
-		buffer = join_buffers(buffer,read_buffer);
+		buffer = join_buffers(buffer, read_buffer);
 	}
-
 	str = get_line(buffer);
-	buffer = buffer_resize(buffer,str);
+	buffer = buffer_resize(buffer, str);
 	if (buffer && buffer[0] == '\0')
 	{
 		free(buffer);

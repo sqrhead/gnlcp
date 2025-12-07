@@ -117,10 +117,12 @@ char	*get_line(char *buffer)
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
-	int			nbytes;
+	ssize_t		nbytes;
 	char		read_buffer[BUFFER_SIZE + 1];
 	char		*str;
-
+	
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	while(!has_newline(buffer))
 	{
 		nbytes = read(fd,read_buffer,BUFFER_SIZE);
@@ -133,9 +135,7 @@ char	*get_next_line(int fd)
 				buffer = NULL;
 				return (str);
 			}
-			// if (buffer)
-			// 	free(buffer);
-			return (NULL); // fail reading
+			return (NULL);
 		}
 		read_buffer[nbytes] = '\0';
 		buffer = join_buffers(buffer,read_buffer);
@@ -153,7 +153,7 @@ char	*get_next_line(int fd)
  
 int main()
 {
-	size_t	fd;
+	int	fd;
 
 	fd = open("gnlrd.txt",O_RDONLY);
 	for (size_t i = 0; i < 10; i ++)

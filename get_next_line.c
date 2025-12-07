@@ -33,7 +33,7 @@ char	*join_buffers(char *buffer, char *read_buffer)
 	}
 	if (!read_buffer)
 		return (NULL);
-	nbuffer = (char *)malloc(strlen(buffer) + strlen(read_buffer));
+	nbuffer = (char *)malloc(strlen(buffer) + strlen(read_buffer) + 1);
 	if (!nbuffer)
 		return (NULL);
 	while (buffer[i])
@@ -47,6 +47,7 @@ char	*join_buffers(char *buffer, char *read_buffer)
 		j ++;
 	}
 	free(buffer);
+	nbuffer[i + j] = '\0';
 	return (nbuffer);
 }
 
@@ -54,10 +55,9 @@ char 	*buffer_resize(char *buffer, char *str)
 {
 	char	*nbuffer;
 	size_t	s_len;
-	size_t	i;
 	size_t	j;
+	size_t	i;
 
-	i = 0;
 	j = 0;
 	if (!buffer)
 		return (NULL);
@@ -67,12 +67,13 @@ char 	*buffer_resize(char *buffer, char *str)
 		return (NULL);
 	}
 	s_len = strlen(str);
-	nbuffer = (char *)malloc(strlen(buffer) - s_len);
+	nbuffer = (char *)malloc(strlen(buffer) - s_len + 1);
 	if(!nbuffer)
 		return (NULL);
+	i = s_len;
 	while(buffer[i])
 	{
-		nbuffer[j] = buffer[s_len + i];
+		nbuffer[j] = buffer[i];
 		i ++;
 		j ++;
 	}
@@ -124,17 +125,29 @@ char	*get_next_line(int fd)
 	{
 		nbytes = read(fd,read_buffer,BUFFER_SIZE);
 		if (nbytes <= 0)
-		{
-			if (buffer)
+		{	
+			if (buffer && buffer[0] != '\0')
+			{
+				str = get_line(buffer);
 				free(buffer);
+				buffer = NULL;
+				return (str);
+			}
+			// if (buffer)
+			// 	free(buffer);
 			return (NULL); // fail reading
-			read_buffer[nbytes] = '\0';
 		}
+		read_buffer[nbytes] = '\0';
 		buffer = join_buffers(buffer,read_buffer);
 	}
 
 	str = get_line(buffer);
 	buffer = buffer_resize(buffer,str);
+	if (buffer && buffer[0] == '\0')
+	{
+		free(buffer);
+		buffer = NULL;
+	}
 	return (str);
 }
  

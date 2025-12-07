@@ -1,7 +1,97 @@
 #include "get_next_line.h"
 
-size_t ft_strlen()
+int	has_newline(char *buffer)
 {
+	size_t	i;
+
+	i = 0;
+	if (!buffer)
+		return (0);
+	while(buffer[i])
+	{
+		if (buffer[i] == '\n')
+			return (1);
+		i ++;
+	}
+	return (0);
+}
+
+char	*join_buffers(char *buffer, char *read_buffer)
+{
+	char	*nbuffer;
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (!buffer)
+	{
+		buffer = (char *)malloc(1);
+		if (!buffer)
+			return (NULL);
+		buffer[0] = '\0';
+	}
+	if (!read_buffer)
+		return (NULL);
+	nbuffer = (char *)malloc(ft_strlen(buffer) + ft_strlen(read_buffer) + 1);
+	if (!nbuffer)
+		return (NULL);
+	while (buffer[i])
+	{
+		nbuffer[i] = buffer[i];
+		i ++;
+	}
+	while(read_buffer[j])
+	{
+		nbuffer[i + j] = read_buffer[j];
+		j ++;
+	}
+	free(buffer);
+	nbuffer[i + j] = '\0';
+	return (nbuffer);
+}
+
+char 	*buffer_resize(char *buffer, char *str)
+{
+	char	*nbuffer;
+	size_t	s_len;
+	size_t	j;
+	size_t	i;
+
+	j = 0;
+	if (!buffer)
+		return (NULL);
+	if (!str)
+	{
+		free(buffer);
+		return (NULL);
+	}
+	s_len = ft_strlen(str);
+	nbuffer = (char *)malloc(strlen(buffer) - s_len + 1);
+	if(!nbuffer)
+		return (NULL);
+	i = s_len;
+	while(buffer[i])
+	{
+		nbuffer[j] = buffer[i];
+		i ++;
+		j ++;
+	}
+	free(buffer);
+	nbuffer[j] = '\0';
+	//nbuffer = join_buffers(nbuffer,&buffer[i]);
+	return (nbuffer);
 
 }
 
+size_t	ft_strlen(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+	{
+		i ++;
+	}
+	return (i);
+}

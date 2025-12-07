@@ -6,7 +6,7 @@
 /*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 13:40:26 by sqrhead           #+#    #+#             */
-/*   Updated: 2025/12/07 23:04:04 by sqrhead          ###   ########.fr       */
+/*   Updated: 2025/12/07 23:09:29 by sqrhead          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char	*is_eof(char **buffer)
 {
 	char	*str;
 
-	if (*buffer && *buffer[0] != '\0')
+	if (*buffer && (*buffer)[0] != '\0')
 	{
 		str = get_line(*buffer);
 		free(*buffer);

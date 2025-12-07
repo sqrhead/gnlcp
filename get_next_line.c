@@ -6,7 +6,7 @@
 /*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 13:40:26 by sqrhead           #+#    #+#             */
-/*   Updated: 2025/12/07 23:09:29 by sqrhead          ###   ########.fr       */
+/*   Updated: 2025/12/07 23:19:10 by sqrhead          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ char	*get_next_line(int fd)
 // int main()
 // {
 // 	int		fd;
-// 	size_t	nlines = 100;
+// 	size_t	nlines = 10;
 // 	fd = open("gnlrd.txt",O_RDONLY);
 // 	for (size_t i = 0; i < nlines; i ++)
 // 	{

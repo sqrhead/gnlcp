@@ -6,7 +6,7 @@
 /*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 13:40:29 by sqrhead           #+#    #+#             */
-/*   Updated: 2025/12/07 14:41:03 by sqrhead          ###   ########.fr       */
+/*   Updated: 2025/12/07 22:51:16 by sqrhead          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ char	*join_buffers(char *buffer, char *read_buffer)
 	int		i;
 	int		j;
 
-	i = 0;
 	j = 0;
 	if (!buffer)
 	{
@@ -43,23 +42,18 @@ char	*join_buffers(char *buffer, char *read_buffer)
 			return (NULL);
 		buffer[0] = '\0';
 	}
-	if (!read_buffer)
-		return (NULL);
 	nbuffer = (char *)malloc(ft_strlen(buffer) + ft_strlen(read_buffer) + 1);
 	if (!nbuffer)
 		return (NULL);
-	while (buffer[i])
-	{
-		nbuffer[i] = buffer[i];
-		i ++;
-	}
+	i = ft_strlen(buffer);
+	ft_memcpy(nbuffer, buffer, i);
 	while (read_buffer[j])
 	{
 		nbuffer[i + j] = read_buffer[j];
 		j ++;
 	}
-	free(buffer);
 	nbuffer[i + j] = '\0';
+	free(buffer);
 	return (nbuffer);
 }
 
@@ -67,10 +61,8 @@ char	*buffer_resize(char *buffer, char *str)
 {
 	char	*nbuffer;
 	size_t	s_len;
-	size_t	j;
-	size_t	i;
+	size_t	buf_len;
 
-	j = 0;
 	if (!buffer)
 		return (NULL);
 	if (!str)
@@ -79,18 +71,13 @@ char	*buffer_resize(char *buffer, char *str)
 		return (NULL);
 	}
 	s_len = ft_strlen(str);
-	nbuffer = (char *)malloc(strlen(buffer) - s_len + 1);
+	buf_len = ft_strlen(buffer);
+	nbuffer = (char *)malloc(buf_len - s_len + 1);
 	if (!nbuffer)
 		return (NULL);
-	i = s_len;
-	while (buffer[i])
-	{
-		nbuffer[j] = buffer[i];
-		i ++;
-		j ++;
-	}
+	ft_memcpy(nbuffer, buffer + s_len, buf_len - s_len);
+	nbuffer[buf_len - s_len] = '\0';
 	free(buffer);
-	nbuffer[j] = '\0';
 	return (nbuffer);
 }
 

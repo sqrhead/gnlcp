@@ -6,11 +6,11 @@
 /*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 13:40:26 by sqrhead           #+#    #+#             */
-/*   Updated: 2025/12/07 14:40:56 by sqrhead          ###   ########.fr       */
+/*   Updated: 2025/12/07 23:04:13 by sqrhead          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
 void	*ft_memcpy(void *to, const void *from, size_t nbytes)
 {
@@ -21,7 +21,7 @@ void	*ft_memcpy(void *to, const void *from, size_t nbytes)
 	i = 0;
 	t = (unsigned char *)to;
 	f = (unsigned char *)from;
-	if (!to && !from)
+	if (!to || !from)
 		return (NULL);
 	while (i < nbytes)
 	{
@@ -59,6 +59,20 @@ char	*get_line(char *buffer)
 	return (str);
 }
 
+char	*is_eof(char **buffer)
+{
+	char	*str;
+
+	if (*buffer && *buffer[0] != '\0')
+	{
+		str = get_line(*buffer);
+		free(*buffer);
+		*buffer = NULL;
+		return (str);
+	}
+	return (NULL);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
@@ -73,14 +87,7 @@ char	*get_next_line(int fd)
 		nbytes = read(fd, read_buffer, BUFFER_SIZE);
 		if (nbytes <= 0)
 		{
-			if (buffer && buffer[0] != '\0')
-			{
-				str = get_line(buffer);
-				free(buffer);
-				buffer = NULL;
-				return (str);
-			}
-			return (NULL);
+			return (is_eof(&buffer));
 		}
 		read_buffer[nbytes] = '\0';
 		buffer = join_buffers(buffer, read_buffer);

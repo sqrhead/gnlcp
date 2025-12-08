@@ -6,7 +6,7 @@
 /*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 13:40:26 by sqrhead           #+#    #+#             */
-/*   Updated: 2025/12/07 23:09:46 by sqrhead          ###   ########.fr       */
+/*   Updated: 2025/12/08 23:08:05 by sqrhead          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,21 @@ char	*is_eof(char **buffer)
 		return (str);
 	}
 	return (NULL);
+}
+
+int	read_and_join(int fd, char **buffer, char *read_buffer)
+{
+	ssize_t	nbytes;
+
+	while (!has_newline(*buffer))
+	{
+		nbytes = read(fd, read_buffer, BUFFER_SIZE);
+		if (nbytes <= 0)
+			return (0);
+		read_buffer[nbytes] = '\0';
+		*buffer = join_buffers(*buffer, read_buffer);
+	}
+	return (1);
 }
 
 char	*get_next_line(int fd)

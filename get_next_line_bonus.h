@@ -30,7 +30,7 @@ char	*join_buffers(char *buffer, char *read_buffer);
 int		has_newline(char *buffer);
 size_t	ft_strlen(const char *str);
 void	*ft_memcpy(void *to, const void *from, size_t nbytes);
-char	*is_eof(char **buffer);
+char	*is_eof(char **buffer, char **read_buffer);
 int		read_and_join(int fd, char **buffer, char *read_buffer);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: sqrhead <sqrhead@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 13:40:26 by sqrhead           #+#    #+#             */
-/*   Updated: 2025/12/08 23:08:05 by sqrhead          ###   ########.fr       */
+/*   Updated: 2025/12/08 23:15:38 by sqrhead          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,12 @@ char	*get_line(char *buffer)
 	return (str);
 }
 
-char	*is_eof(char **buffer)
+char	*is_eof(char **buffer, char **read_buffer)
 {
 	char	*str;
 
+	free(*read_buffer);
+	*read_buffer = NULL;
 	if (*buffer && (*buffer)[0] != '\0')
 	{
 		str = get_line(*buffer);
@@ -91,24 +93,19 @@ int	read_and_join(int fd, char **buffer, char *read_buffer)
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
-	ssize_t		nbytes;
-	char		read_buffer[BUFFER_SIZE + 1];
+	char		*read_buffer;
 	char		*str;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (!has_newline(buffer))
-	{
-		nbytes = read(fd, read_buffer, BUFFER_SIZE);
-		if (nbytes <= 0)
-		{
-			return (is_eof(&buffer));
-		}
-		read_buffer[nbytes] = '\0';
-		buffer = join_buffers(buffer, read_buffer);
-	}
+	read_buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!read_buffer)
+		return (NULL);
+	if (!read_and_join(fd, &buffer, read_buffer))
+		return (is_eof(&buffer, &read_buffer));
 	str = get_line(buffer);
 	buffer = buffer_resize(buffer, str);
+	free(read_buffer);
 	if (buffer && buffer[0] == '\0')
 	{
 		free(buffer);
@@ -120,11 +117,13 @@ char	*get_next_line(int fd)
 // int main()
 // {
 // 	int		fd;
-// 	size_t	nlines = 100;
+// 	size_t	nlines = 10;
 // 	fd = open("gnlrd.txt",O_RDONLY);
 // 	for (size_t i = 0; i < nlines; i ++)
 // 	{
-// 		printf("ln %s\n",get_next_line(fd));
+// 		char *str = get_next_line(fd);
+// 		printf("ln %s\n",str);
+// 		free(str);
 // 	}
 // 	close(fd);
 // }

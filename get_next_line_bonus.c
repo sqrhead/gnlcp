@@ -93,10 +93,10 @@ int	read_and_join(int fd, char **buffer, char *read_buffer)
 char	*get_next_line(int fd)
 {
 	static char	*buffer;
-	char		*read_buffer;
+	char		*read_buffer[MAX_FILE];
 	char		*str;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > MAX_FILE)
 		return (NULL);
 	read_buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!read_buffer)
